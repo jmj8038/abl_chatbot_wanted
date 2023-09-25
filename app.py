@@ -26,7 +26,8 @@ selected_contract = st.sidebar.selectbox("계약종류를 선택하세요", cont
 print(selected_contract)
     
 def request_chat_api(
-    message: str,
+    #message: str,
+    messages: list,
     # model: str = "gpt-3.5-turbo",
     # max_tokens: int = 500,
     # temperature: float = 0.9,
@@ -35,7 +36,8 @@ def request_chat_api(
     resp = requests.post(
         API_BASE_URL,
         json={
-            "message": message,
+            #"message": message,
+            "messages": messages,
             # "model": model,
             # "max_tokens": max_tokens,
             # "temperature": temperature,
@@ -84,7 +86,7 @@ def chat_main():
         with st.chat_message("user"):
             st.markdown(message)
 
-        assistant_response = request_chat_api(message=message, terms=selected_contract)
+        assistant_response = request_chat_api(messages=st.session_state.messages, terms=selected_contract)
 
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
