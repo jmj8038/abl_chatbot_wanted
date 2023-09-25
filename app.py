@@ -27,7 +27,8 @@ print(selected_contract)
     
 def request_chat_api(
     message: str,
-    messages: List,
+    #messages: List,
+    messages,
     # model: str = "gpt-3.5-turbo",
     # max_tokens: int = 500,
     # temperature: float = 0.9,
