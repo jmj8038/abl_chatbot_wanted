@@ -4,7 +4,8 @@ import requests
 import streamlit as st
 
 #API_BASE_URL = "http://localhost:8000/chat"
-API_BASE_URL = "https://22e4-218-38-115-107.ngrok.io/chat"
+API_BASE_URL = 'https://ba34-218-38-115-107.ngrok-free.app/chat'
+
 
 #st.title("ABL AI ChtBot")
 
