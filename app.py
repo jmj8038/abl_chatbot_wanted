@@ -3,8 +3,8 @@ from typing import List
 import requests
 import streamlit as st
 
-#API_BASE_URL = "http://localhost:8000/chat"
-API_BASE_URL = "https://22e4-218-38-115-107.ngrok.io/chat"
+API_BASE_URL = "http://localhost:8000/chat"
+#API_BASE_URL = "https://22e4-218-38-115-107.ngrok.io/chat"
 
 #st.title("ABL AI ChtBot")
 
@@ -89,8 +89,11 @@ def chat_main():
         with st.chat_message("user"):
             st.markdown(message)
 
+        print(st.session_state['messages'][:-1])
+        
         assistant_response = request_chat_api(message = message, messages=st.session_state['messages'][:-1], terms=selected_contract)
 
+        print("*********************", assistant_response)
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
             full_response = ""
