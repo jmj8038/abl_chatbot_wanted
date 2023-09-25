@@ -1,12 +1,10 @@
 import time
-from typing import List
+
 import requests
 import streamlit as st
 
-#API_BASE_URL = "http://localhost:8000/chat"
-API_BASE_URL = 'https://ba34-218-38-115-107.ngrok-free.app/chat'
-
-
+API_BASE_URL = "http://localhost:8000/chat"
+#API_BASE_URL = https://22e4-218-38-115-107.ngrok.io/chat 
 #st.title("ABL AI ChtBot")
 
 contracts = ['주계약', '무배당 경도이상치매진단특약T(해약환급금 미지급형)',
@@ -28,8 +26,6 @@ print(selected_contract)
     
 def request_chat_api(
     message: str,
-    #messages: List,
-    messages,
     # model: str = "gpt-3.5-turbo",
     # max_tokens: int = 500,
     # temperature: float = 0.9,
@@ -39,15 +35,12 @@ def request_chat_api(
         API_BASE_URL,
         json={
             "message": message,
-            "messages": messages,
             # "model": model,
             # "max_tokens": max_tokens,
             # "temperature": temperature,
             'terms': terms
         },
     )
-    
-    print(resp)
     resp = resp.json()
     return resp["message"]
 
@@ -57,10 +50,10 @@ def init_session_state():
 
     # Initialize chat history
     if "messages" not in st.session_state:
-        st.session_state['messages'] = []
+        st.session_state.messages = []
 
     #Display chat messages from history on app rerun
-    for message in st.session_state['messages']:
+    for message in st.session_state.messages:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
@@ -86,15 +79,12 @@ def chat_main():
     # print(selected_contract)
     
     if message := st.chat_input(""):
-        st.session_state['messages'].append({"role": "user", "content": message})
+        st.session_state.messages.append({"role": "user", "content": message})
         with st.chat_message("user"):
             st.markdown(message)
 
-        print(st.session_state['messages'][:-1])
-        
-        assistant_response = request_chat_api(message = message, messages=st.session_state['messages'][:-1], terms=selected_contract)
+        assistant_response = request_chat_api(message=message, terms=selected_contract)
 
-        print("*********************", assistant_response)
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
             full_response = ""
@@ -108,10 +98,10 @@ def chat_main():
             message_placeholder.markdown(full_response)
 
         # Add assistant response to chat history
-        st.session_state['messages'].append(
+        st.session_state.messages.append(
             {"role": "assistant", "content": full_response}
         )
-        print(st.session_state['messages'])
+        print(st.session_state.messages)
         
 
 
