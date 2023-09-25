@@ -44,6 +44,8 @@ def request_chat_api(
             'terms': terms
         },
     )
+    
+    print(resp)
     resp = resp.json()
     return resp["message"]
 
