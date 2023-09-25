@@ -1,5 +1,5 @@
 import time
-
+from typing import List
 import requests
 import streamlit as st
 
@@ -27,7 +27,7 @@ print(selected_contract)
     
 def request_chat_api(
     #message: str,
-    messages: list,
+    messages: List,
     # model: str = "gpt-3.5-turbo",
     # max_tokens: int = 500,
     # temperature: float = 0.9,
@@ -53,10 +53,10 @@ def init_session_state():
 
     # Initialize chat history
     if "messages" not in st.session_state:
-        st.session_state.messages = []
+        st.session_state['messages'] = []
 
     #Display chat messages from history on app rerun
-    for message in st.session_state.messages:
+    for message in st.session_state['messages']:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
@@ -82,11 +82,11 @@ def chat_main():
     # print(selected_contract)
     
     if message := st.chat_input(""):
-        st.session_state.messages.append({"role": "user", "content": message})
+        st.session_state['messages'].append({"role": "user", "content": message})
         with st.chat_message("user"):
             st.markdown(message)
 
-        assistant_response = request_chat_api(messages=st.session_state.messages, terms=selected_contract)
+        assistant_response = request_chat_api(messages=st.session_state['messages'], terms=selected_contract)
 
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
@@ -101,10 +101,10 @@ def chat_main():
             message_placeholder.markdown(full_response)
 
         # Add assistant response to chat history
-        st.session_state.messages.append(
+        st.session_state['messages'].append(
             {"role": "assistant", "content": full_response}
         )
-        print(st.session_state.messages)
+        print(st.session_state['messages'])
         
 
 
