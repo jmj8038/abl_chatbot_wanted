@@ -21,7 +21,7 @@ contracts = ['주계약', '무배당 경도이상치매진단특약T(해약환�
        '무배당 간병인사용지원치매입원보장특약(갱신형)', '지정대리청구서비스특약', '특정신체부위ㆍ질병보장제한부인수특약',
        '단체취급특약', '장애인전용보험전환특약']
     
-selected_contract = st.sidebar.selectbox("계약종류를 선택하세요", contracts)
+selected_contract = st.sidebar.selectbox("약관 종류를 선택하세요", contracts)
 print(selected_contract)
     
 def request_chat_api(
