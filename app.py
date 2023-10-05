@@ -4,7 +4,7 @@ import requests
 import streamlit as st
 
 #API_BASE_URL = "http://localhost:8000/chat"
-API_BASE_URL = 'https://9224-218-38-115-132.ngrok-free.app/chat'
+API_BASE_URL = 'https://f410-218-38-115-132.ngrok-free.app/chat'
 #st.title("ABL AI ChtBot")
 
 contracts = ['주계약', '무배당 경도이상치매진단특약T(해약환급금 미지급형)',
@@ -46,7 +46,7 @@ def request_chat_api(
 
 
 def init_session_state():
-    st.title("ABL AI ChatBot")
+    st.title("ABL AI ChatBot(WantedLaas)")
 
     # Initialize chat history
     if "messages" not in st.session_state:
