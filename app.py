@@ -4,7 +4,7 @@ import requests
 import streamlit as st
 
 #API_BASE_URL = "http://localhost:8000/chat"
-API_BASE_URL = 'https://f410-218-38-115-132.ngrok-free.app/chat'
+API_BASE_URL = 'https://6a9c-218-38-115-107.ngrok-free.app/chat'
 #st.title("ABL AI ChtBot")
 
 contracts = ['주계약', '무배당 경도이상치매진단특약T(해약환급금 미지급형)',
