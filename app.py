@@ -94,8 +94,8 @@ def chat_main():
                     time.sleep(0.05)
                     # Add a blinking cursor to simulate typing
                     message_placeholder.markdown(full_response)
-                full_response += "\n"
-            full_response += f" \n --------참고 내용--------- \n\n + {hlink} + \n" #full_response.replace('  ', ' ')
+                full_response += "\n\n --------참고 내용--------- \n\n"
+            full_response += hlink + "\n" #full_response.replace('  ', ' ')
             message_placeholder.markdown(full_response)
 
         # Add assistant response to chat history
