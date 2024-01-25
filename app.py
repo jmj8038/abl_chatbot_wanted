@@ -46,7 +46,7 @@ def request_chat_api(
 
 
 def init_session_state():
-    st.title("ABL AI ChatBot(Wanted)")
+    st.title("ABL AI ChatBot(OpenAI GPT-4)")
 
     # Initialize chat history
     if "messages" not in st.session_state:
