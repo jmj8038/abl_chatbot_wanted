@@ -41,7 +41,7 @@ def request_chat_api(
             #'terms': terms
         },
     )
-    #resp = resp.json()
+    resp = resp.json()
     #print(resp)
     return resp #["message"], resp["hyperlink"]
 
