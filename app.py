@@ -42,8 +42,9 @@ def request_chat_api(
         },
     )
     resp = resp.json()
-    #print(resp)
-    return resp["message"] #, resp["hyperlink"]
+    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", resp['message']['content'])
+    
+    return resp["message"]['content'] #, resp["hyperlink"]
 
 
 def init_session_state():
@@ -84,7 +85,8 @@ def chat_main():
         with st.chat_message("user"):
             st.markdown(message)
 
-        assistant_response, hlink = request_chat_api(message=message)#, terms=selected_contract)
+        #assistant_response, hlink = request_chat_api(message=message) #, terms=selected_contract)
+        assistant_response = request_chat_api(message=message) #, terms=selected_contract)
 
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
@@ -96,7 +98,7 @@ def chat_main():
                     # Add a blinking cursor to simulate typing
                     message_placeholder.markdown(full_response)
                 full_response += "\n"
-            full_response = full_response + "\n ----------------------참고 약관---------------------- \n\n" + hlink + "\n" #full_response.replace('  ', ' ')
+            full_response = full_response #+ "\n ----------------------참고 약관---------------------- \n\n" + hlink + "\n" #full_response.replace('  ', ' ')
             message_placeholder.markdown(full_response)
 
         # Add assistant response to chat history
