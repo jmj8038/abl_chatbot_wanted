@@ -43,7 +43,7 @@ def request_chat_api(
     )
     resp = resp.json()
     #print(resp)
-    return resp #["message"], resp["hyperlink"]
+    return resp["message"] #, resp["hyperlink"]
 
 
 def init_session_state():
