@@ -1,10 +1,10 @@
 import time
-
+import json
 import requests
 import streamlit as st
 
 #API_BASE_URL = "http://localhost:8002/chat"
-API_BASE_URL = 'https://ad5f-218-38-21-23.ngrok-free.app/chat'
+API_BASE_URL = 'https://684b-34-68-237-148.ngrok-free.app/chat'
 #st.title("ABL AI ChtBot")
 
 contracts = ['주계약', '무배당 경도이상치매진단특약T(해약환급금 미지급형)',
@@ -31,20 +31,24 @@ def request_chat_api(
     # temperature: float = 0.9,
     #terms: str
 ) -> str:
+    param = {'user_message': message}
     resp = requests.post(
         API_BASE_URL,
         json={
-            "message": message,
+            #"message": message,
+            param
             # "model": model,
             # "max_tokens": max_tokens,
             # "temperature": temperature,
             #'terms': terms
         },
     )
-    resp = resp.json()
-    print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", resp['message']['content'])
+    #resp = resp.json()
+    resp = json.loads(resp.content)
+    resp = resp['message']
+    # print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", resp['message']['content'])
     
-    return resp["message"]['content'] #, resp["hyperlink"]
+    return resp #["message"]['content'] #, resp["hyperlink"]
 
 
 def init_session_state():
@@ -111,3 +115,7 @@ def chat_main():
 
 if __name__ == "__main__":
     chat_main()
+
+
+# python -m streamlit run app.py
+# uvicorn api:app --reload --port 8002
