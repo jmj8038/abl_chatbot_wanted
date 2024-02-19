@@ -34,14 +34,14 @@ def request_chat_api(
     param = {'user_message': message}
     resp = requests.post(
         API_BASE_URL,
-        json={
-            #"message": message,
-            param
-            # "model": model,
-            # "max_tokens": max_tokens,
-            # "temperature": temperature,
-            #'terms': terms
-        },
+        json=param
+        # {
+        #     #"message": message,
+        #     # "model": model,
+        #     # "max_tokens": max_tokens,
+        #     # "temperature": temperature,
+        #     #'terms': terms
+        # },
     )
     #resp = resp.json()
     resp = json.loads(resp.content)
