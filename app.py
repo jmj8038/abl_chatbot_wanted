@@ -4,7 +4,7 @@ import requests
 import streamlit as st
 
 #API_BASE_URL = "http://localhost:8002/chat"
-API_BASE_URL = 'https://f26d-34-143-142-138.ngrok-free.app/chat'
+API_BASE_URL = 'https://9746-35-247-162-66.ngrok-free.app/chat'
 #st.title("ABL AI ChtBot")
 
 contracts = ['주계약', '무배당 경도이상치매진단특약T(해약환급금 미지급형)',
@@ -59,7 +59,7 @@ def init_session_state():
     현재는 치매보험 질문에 대한 답변을 제공하고 있습니다.
     답변이 부족할 수 있으나, 빠른 시일 내에 더 많은 정보를 제공할 수 있도록 노력하겠습니다.
     
-    답변이 느릴 수 있으나, 조금만 기다려 주시면 감사하겠습니다.
+    답변이 느릴 수 있으나, 조금만 기다려 주시면 감사하겠습니다. 
     """
     # Initialize chat history
     if "messages" not in st.session_state:
