@@ -83,9 +83,11 @@ def chat_main():
     
     # selected_contract = st.selectbox("계약종류를 선택하세요", contracts)
     # print(selected_contract)
-    
+    init_message = "안녕하세요. ABL AI ChatBot입니다. 무엇을 도와드릴까요?"
     if message := st.chat_input(""):
-        st.session_state.messages.append({"role": "user", "content": message})
+        #st.session_state.messages.append({"role": "user", "content": message})
+        st.session_state.messages.append({"role": "assistant", "content": init_message})
+        
         with st.chat_message("user"):
             st.markdown(message)
 
