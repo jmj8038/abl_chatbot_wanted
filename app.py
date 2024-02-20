@@ -53,10 +53,11 @@ def request_chat_api(
 
 def init_session_state():
     st.title("ABL AI ChatBot(OpenAI GPT-4)")
-
+    init_message = "안녕하세요. ABL AI ChatBot입니다. 무엇을 도와드릴까요?"
     # Initialize chat history
     if "messages" not in st.session_state:
-        st.session_state.messages = []
+        st.session_state.messages = [{"role": "assistant", "content": init_message}]
+        #st.session_state.messages = []
 
     #Display chat messages from history on app rerun
     for message in st.session_state.messages:
@@ -83,11 +84,11 @@ def chat_main():
     
     # selected_contract = st.selectbox("계약종류를 선택하세요", contracts)
     # print(selected_contract)
-    init_message = "안녕하세요. ABL AI ChatBot입니다. 무엇을 도와드릴까요?"
+    # init_message = "안녕하세요. ABL AI ChatBot입니다. 무엇을 도와드릴까요?"
     
-    if "messages" not in st.session_state.keys():
-        st.session_state.messages = [{"role": "assistant", "content": init_message}]
-        print(st.session_state.messages)
+    # if "messages" not in st.session_state.keys():
+    #     st.session_state.messages = [{"role": "assistant", "content": init_message}]
+    #     print(st.session_state.messages)
         
     if message := st.chat_input(""):
         st.session_state.messages.append({"role": "user", "content": message})
