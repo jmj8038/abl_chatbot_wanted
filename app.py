@@ -54,9 +54,12 @@ def request_chat_api(
 def init_session_state():
     st.title("ABL AI ChatBot(Lamma2)")
     init_message = """
-    안녕하세요. ABL AI ChatBot입니다. 무엇을 도와드릴까요?
+    안녕하세요. ABL AI FC입니다. 무엇을 도와드릴까요?
     저는 지금 학습 중에 있어 더 많은 정보를 얻기 위해 노력하고 있습니다.
+    현재는 치매보험에 대한 질문에 대한 답변을 제공하고 있습니다.
     답변이 부족할 수 있으나, 빠른 시일 내에 더 많은 정보를 제공할 수 있도록 노력하겠습니다.
+    
+    답변이 느릴 수 있으나, 조금만 기다려 주시면 감사하겠습니다.
     """
     # Initialize chat history
     if "messages" not in st.session_state:
