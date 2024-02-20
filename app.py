@@ -87,35 +87,36 @@ def chat_main():
     
     if "messages" not in st.session_state.keys():
         st.session_state.messages = [{"role": "assistant", "content": init_message}]
-    
-        if message := st.chat_input(""):
-            st.session_state.messages.append({"role": "user", "content": message})
-            #st.session_state.messages.append({"role": "assistant", "content": init_message})
-            
-            with st.chat_message("user"):
-                st.markdown(message)
+        print(st.session_state.messages)
+        
+    if message := st.chat_input(""):
+        st.session_state.messages.append({"role": "user", "content": message})
+        #st.session_state.messages.append({"role": "assistant", "content": init_message})
+        
+        with st.chat_message("user"):
+            st.markdown(message)
 
-            #assistant_response, hlink = request_chat_api(message=message) #, terms=selected_contract)
-            assistant_response = request_chat_api(message=message) #, terms=selected_contract)
+        #assistant_response, hlink = request_chat_api(message=message) #, terms=selected_contract)
+        assistant_response = request_chat_api(message=message) #, terms=selected_contract)
 
-            with st.chat_message("assistant"):
-                message_placeholder = st.empty()
-                full_response = ""
-                for lines in assistant_response.split("\n"):
-                    for chunk in lines.split():
-                        full_response += chunk + " "
-                        time.sleep(0.05)
-                        # Add a blinking cursor to simulate typing
-                        message_placeholder.markdown(full_response)
-                    full_response += "\n"
-                full_response = full_response #+ "\n ----------------------참고 약관---------------------- \n\n" + hlink + "\n" #full_response.replace('  ', ' ')
-                message_placeholder.markdown(full_response)
+        with st.chat_message("assistant"):
+            message_placeholder = st.empty()
+            full_response = ""
+            for lines in assistant_response.split("\n"):
+                for chunk in lines.split():
+                    full_response += chunk + " "
+                    time.sleep(0.05)
+                    # Add a blinking cursor to simulate typing
+                    message_placeholder.markdown(full_response)
+                full_response += "\n"
+            full_response = full_response #+ "\n ----------------------참고 약관---------------------- \n\n" + hlink + "\n" #full_response.replace('  ', ' ')
+            message_placeholder.markdown(full_response)
 
-            # Add assistant response to chat history
-            st.session_state.messages.append(
-                {"role": "assistant", "content": full_response}
-            )
-            print(st.session_state.messages)
+        # Add assistant response to chat history
+        st.session_state.messages.append(
+            {"role": "assistant", "content": full_response}
+        )
+        print(st.session_state.messages)
         
 
 
