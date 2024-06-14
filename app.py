@@ -7,6 +7,7 @@ import os
 import io
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
+from googleapiclient.http import MediaIoBaseDownload
 
 API_BASE_URL = "http://localhost:8002/chat"
 #API_BASE_URL = 'https://3455-35-247-162-66.ngrok-free.app/chat'
@@ -43,15 +44,14 @@ def request_chat_api(
     return resp #["message"]['content'] #, resp["hyperlink"]
 
  #OAuth 2.0 인증 및 Google Drive API 클라이언트 설정
+# OAuth 2.0 인증 및 Google Drive API 클라이언트 설정
 def get_drive_service():
-    SCOPES = ['<https://www.googleapis.com/auth/drive>']
-    SERVICE_ACCOUNT_FILE = '/Users/minjaejin/Library/CloudStorage/GoogleDrive-jmj8038@gmail.com/내 드라이브/ABL/복리후생규정/llamaindex/chatgpt'  # 서비스 계정 파일 경로
-
-    credentials = service_account.Credentials.from_service_account_file(
-        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-
+    # 환경 변수에서 서비스 계정 키 정보 가져오기
+    service_account_info = st.secrets["gcp_service_account"]
+    credentials = service_account.Credentials.from_service_account_info(service_account_info)
     service = build('drive', 'v3', credentials=credentials)
     return service
+
 
 def download_pdf_from_gdrive(file_id):
     service = get_drive_service()
@@ -61,7 +61,6 @@ def download_pdf_from_gdrive(file_id):
     done = False
     while not done:
         status, done = downloader.next_chunk()
-
     file_handle.seek(0)
     return file_handle
 
