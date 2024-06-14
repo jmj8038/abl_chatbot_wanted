@@ -101,6 +101,7 @@ def init_session_state():
     with right_col:
         st.header("Reference Document")
         #file_id = "your-google-drive-file-id"  # Google Drive 파일 ID
+        file_id = None
         if file_id:
             file_handle = download_pdf_from_gdrive(file_id)
             display_pdf(file_handle)
