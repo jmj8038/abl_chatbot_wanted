@@ -3,6 +3,11 @@ import json
 import requests
 import streamlit as st
 
+import os
+import io
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+
 API_BASE_URL = "http://localhost:8002/chat"
 #API_BASE_URL = 'https://3455-35-247-162-66.ngrok-free.app/chat'
 #st.title("ABL AI ChtBot")
@@ -40,7 +45,7 @@ def request_chat_api(
  #OAuth 2.0 인증 및 Google Drive API 클라이언트 설정
 def get_drive_service():
     SCOPES = ['<https://www.googleapis.com/auth/drive>']
-    SERVICE_ACCOUNT_FILE = 'path/to/your/service-account-file.json'  # 서비스 계정 파일 경로
+    SERVICE_ACCOUNT_FILE = '/Users/minjaejin/Library/CloudStorage/GoogleDrive-jmj8038@gmail.com/내 드라이브/ABL/복리후생규정/llamaindex/chatgpt'  # 서비스 계정 파일 경로
 
     credentials = service_account.Credentials.from_service_account_file(
         SERVICE_ACCOUNT_FILE, scopes=SCOPES)
@@ -59,6 +64,7 @@ def download_pdf_from_gdrive(file_id):
 
     file_handle.seek(0)
     return file_handle
+
 
 # PDF를 페이지별로 이미지를 생성하여 보여주는 함수
 def display_pdf(file_handle):
@@ -100,8 +106,7 @@ def init_session_state():
      #PDF 뷰어 (오른쪽)
     with right_col:
         st.header("Reference Document")
-        #file_id = "your-google-drive-file-id"  # Google Drive 파일 ID
-        file_id = None
+        file_id = "1Gkd7NYYju-Mqy2wNbR1A5OaQAQHTSBsH"  # Google Drive 파일 ID
         if file_id:
             file_handle = download_pdf_from_gdrive(file_id)
             display_pdf(file_handle)
