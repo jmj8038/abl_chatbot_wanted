@@ -38,7 +38,7 @@ def request_chat_api(
 
 
 def init_session_state():
-    st.title("ABL AI ChatBot(Lamma2)")
+    st.title("ABL AI ChatBot")
     init_message = """
     안녕하세요. 무엇을 도와드릴까요?
     """
