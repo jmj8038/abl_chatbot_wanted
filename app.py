@@ -9,7 +9,8 @@ API_BASE_URL = "http://localhost:8002/chat"
     
 # selected_contract = st.sidebar.selectbox("약관 종류를 선택하세요", contracts)
 # print(selected_contract)
-    
+
+
 def request_chat_api(
     message: str,
     # model: str = "gpt-3.5-turbo",
@@ -36,22 +37,75 @@ def request_chat_api(
     
     return resp #["message"]['content'] #, resp["hyperlink"]
 
+ #OAuth 2.0 인증 및 Google Drive API 클라이언트 설정
+def get_drive_service():
+    SCOPES = ['<https://www.googleapis.com/auth/drive>']
+    SERVICE_ACCOUNT_FILE = 'path/to/your/service-account-file.json'  # 서비스 계정 파일 경로
+
+    credentials = service_account.Credentials.from_service_account_file(
+        SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+
+    service = build('drive', 'v3', credentials=credentials)
+    return service
+
+def download_pdf_from_gdrive(file_id):
+    service = get_drive_service()
+    request = service.files().get_media(fileId=file_id)
+    file_handle = io.BytesIO()
+    downloader = MediaIoBaseDownload(file_handle, request)
+    done = False
+    while not done:
+        status, done = downloader.next_chunk()
+
+    file_handle.seek(0)
+    return file_handle
+
+# PDF를 페이지별로 이미지를 생성하여 보여주는 함수
+def display_pdf(file_handle):
+    try:
+        pdf_document = fitz.open(stream=file_handle, filetype="pdf")
+        for page_num in range(len(pdf_document)):
+            page = pdf_document.load_page(page_num)
+            pix = page.get_pixmap()
+            img = pix.tobytes("png")
+            st.image(img)
+    except Exception as e:
+        st.error(f"Cannot display PDF: {e}")
+
+
 
 def init_session_state():
-    st.title("ABL AI ChatBot")
-    init_message = """
-    안녕하세요. 무엇을 도와드릴까요?
-    """
-    # Initialize chat history
-    if "messages" not in st.session_state:
-        st.session_state.messages = [{"role": "assistant", "content": init_message}]
-        #st.session_state.messages = []
+    
+# 레이아웃 분할
+    st.set_page_config(layout="wide")
+    
+    left_col, right_col = st.columns(2)
+    
+    with left_col:
 
-    #Display chat messages from history on app rerun
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+        st.title("ABL AI ChatBot")
+        init_message = """
+        안녕하세요. 무엇을 도와드릴까요?
+        """
+        # Initialize chat history
+        if "messages" not in st.session_state:
+            st.session_state.messages = [{"role": "assistant", "content": init_message}]
+            #st.session_state.messages = []
 
+        #Display chat messages from history on app rerun
+        for message in st.session_state.messages:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
+
+     #PDF 뷰어 (오른쪽)
+    with right_col:
+        st.header("Reference Document")
+        file_id = "your-google-drive-file-id"  # Google Drive 파일 ID
+        if file_id:
+            file_handle = download_pdf_from_gdrive(file_id)
+            display_pdf(file_handle)
+        else:
+            st.warning("No file ID provided")
 
 def chat_main():
     init_session_state()
