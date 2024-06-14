@@ -78,7 +78,7 @@ def init_session_state():
     
 # 레이아웃 분할
     st.set_page_config(layout="wide")
-    
+
     left_col, right_col = st.columns(2)
     
     with left_col:
@@ -100,7 +100,7 @@ def init_session_state():
      #PDF 뷰어 (오른쪽)
     with right_col:
         st.header("Reference Document")
-        file_id = "your-google-drive-file-id"  # Google Drive 파일 ID
+        #file_id = "your-google-drive-file-id"  # Google Drive 파일 ID
         if file_id:
             file_handle = download_pdf_from_gdrive(file_id)
             display_pdf(file_handle)
