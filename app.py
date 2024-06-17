@@ -40,7 +40,7 @@ def request_chat_api(
     )
     #resp = resp.json()
     resp = json.loads(resp.content)
-    resp = resp['user_message']
+    resp = resp['user_message']['contecnt']
     # print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", resp['message']['content'])
     
     return resp #["message"]['content'] #, resp["hyperlink"]
