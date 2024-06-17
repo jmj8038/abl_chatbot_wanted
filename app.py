@@ -112,9 +112,9 @@ def chat_main():
     # 왼쪽 컬럼: 채팅 인터페이스
     with left_col:
         st.title("ABL AI ChatBot")
-        for message in st.session_state.messages:
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
+        # for message in st.session_state.messages:
+        #     with st.chat_message(message["role"]):
+        #         st.markdown(message["content"])
 
         if message := st.chat_input("메시지를 입력하세요..."):
             st.session_state.messages.append({"role": "user", "content": message})
