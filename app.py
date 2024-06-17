@@ -10,8 +10,8 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 import fitz
 
-API_BASE_URL = "http://localhost:8002/chat"
-#API_BASE_URL = 'https://3455-35-247-162-66.ngrok-free.app/chat'
+#API_BASE_URL = "http://localhost:8002/chat"
+API_BASE_URL = 'https://22f6-34-136-50-177.ngrok-free.app/chat'
 #st.title("ABL AI ChtBot")
     
 # selected_contract = st.sidebar.selectbox("약관 종류를 선택하세요", contracts)
@@ -45,7 +45,6 @@ def request_chat_api(
     return resp #["message"]['content'] #, resp["hyperlink"]
 
  #OAuth 2.0 인증 및 Google Drive API 클라이언트 설정
-# OAuth 2.0 인증 및 Google Drive API 클라이언트 설정
 def get_drive_service():
     # 환경 변수에서 서비스 계정 키 정보 가져오기
     service_account_info = st.secrets["gcp_service_account"]
@@ -67,7 +66,7 @@ def download_pdf_from_gdrive(file_id):
 
 
 # PDF를 페이지별로 이미지를 생성하여 보여주는 함수
-def display_pdf(file_handle):
+def display_pdf(file_handle, page_num=0):
     try:
         pdf_document = fitz.open(stream=file_handle, filetype="pdf")
         for page_num in range(len(pdf_document)):
@@ -109,34 +108,12 @@ def init_session_state():
         file_id = "1Gkd7NYYju-Mqy2wNbR1A5OaQAQHTSBsH"  # Google Drive 파일 ID
         if file_id:
             file_handle = download_pdf_from_gdrive(file_id)
-            display_pdf(file_handle)
+            display_pdf(file_handle, page_num)
         else:
             st.warning("No file ID provided")
 
 def chat_main():
     init_session_state()
-    
-    # contracts = ['주계약', '무배당 경도이상치매진단특약T(해약환급금 미지급형)',
-    #    '무배당 중등도이상치매진단특약T(해약환급금 미지급형)',
-    #    '무배당 중등도이상치매종신간병생활자금특약T(해약환급금 미지급형)',
-    #    '무배당 중증치매종신간병생활자금특약T(해약환급금 미지급형)',
-    #    '무배당 중증알츠하이머치매진단특약T(해약환급금 미지급형)', '무배당 특정파킨슨ㆍ루게릭진단특약T(해약환급금 미지급형)',
-    #    '무배당 장기요양(1~2등급)재가급여종신지원특약(해약환급금 미지급형)',
-    #    '무배당 장기요양(1~5등급)재가급여지원특약(해약환급금 미지급형)',
-    #    '무배당 장기요양(1~2등급)시설급여종신지원특약(해약환급금 미지급형)',
-    #    '무배당 장기요양(1~5등급)시설급여지원특약(해약환급금 미지급형)',
-    #    '무배당 급여치매ㆍ뇌혈관질환검사비보장특약(해약환급금 미지급형)',
-    #    '무배당 급여치매약물치료보장특약(해약환급금 미지급형)', '무배당 중증치매산정특례대상보장특약(해약환급금 미지급형)',
-    #    '무배당 간병인사용지원치매입원보장특약(갱신형)', '지정대리청구서비스특약', '특정신체부위ㆍ질병보장제한부인수특약',
-    #    '단체취급특약', '장애인전용보험전환특약']
-    
-    # selected_contract = st.selectbox("계약종류를 선택하세요", contracts)
-    # print(selected_contract)
-    # init_message = "안녕하세요. ABL AI ChatBot입니다. 무엇을 도와드릴까요?"
-    
-    # if "messages" not in st.session_state.keys():
-    #     st.session_state.messages = [{"role": "assistant", "content": init_message}]
-    #     print(st.session_state.messages)
         
     if message := st.chat_input(""):
         st.session_state.messages.append({"role": "user", "content": message})
@@ -147,6 +124,13 @@ def chat_main():
 
         #assistant_response, hlink = request_chat_api(message=message) #, terms=selected_contract)
         assistant_response = request_chat_api(message=message) #, terms=selected_contract)
+        
+        print("******************\n\n")
+        print(assistant_response)
+        print("******************\n\n")
+        
+        assistant_response = assistant_response['content']
+        page_num = assistant_response['pages'][0]
 
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
