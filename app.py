@@ -12,7 +12,7 @@ from googleapiclient.errors import HttpError
 import fitz
 
 #API_BASE_URL = "http://localhost:8002/chat"
-API_BASE_URL = 'https://22f6-34-136-50-177.ngrok-free.app/chat'
+API_BASE_URL = 'https://2274-35-223-57-127.ngrok-free.app/chat'
 #st.title("ABL AI ChtBot")
     
 # selected_contract = st.sidebar.selectbox("약관 종류를 선택하세요", contracts)
@@ -26,21 +26,19 @@ def request_chat_api(
     # temperature: float = 0.9,
     #terms: str
 ) -> str:
-    param = {'user_message': message}
+    
+    print("@@@@@@@@@@@@@@@@", message)
+    param = {'content': message}
     resp = requests.post(
         API_BASE_URL,
         json=param
-        # {
-        #     #"message": message,
-        #     # "model": model,
-        #     # "max_tokens": max_tokens,
-        #     # "temperature": temperature,
-        #     #'terms': terms
-        # },
     )
-    #resp = resp.json()
-    resp = json.loads(resp.content)
-    resp = resp['user_message']['contecnt']
+    resp = resp.json()
+    print("----------------------", resp)
+    #resp = json.loads(resp)
+    #resp = resp['message']
+
+
     # print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", resp['message']['content'])
     
     return resp #["message"]['content'] #, resp["hyperlink"]
@@ -81,6 +79,7 @@ def download_pdf_from_gdrive(file_id):
 # PDF를 페이지별로 이미지를 생성하여 보여주는 함수
 def display_pdf(file_handle, page_num):
     try:
+        page_num = int(page_num)-1
         pdf_document = fitz.open(stream=file_handle, filetype="pdf")
         if 0 <= page_num < len(pdf_document):
             page = pdf_document.load_page(page_num)
@@ -100,44 +99,83 @@ def init_session_state():
     if "messages" not in st.session_state:
         st.session_state.messages = [{"role": "assistant", "content": init_message}]
     if "page_num" not in st.session_state:
-        st.session_state.page_num = 0
+        st.session_state.page_num = 1
 
 
 def chat_main():
     
+    # 메인 레이아웃 설정
     st.set_page_config(layout="wide")
     init_session_state()
+
+    # 스타일 추가
+    st.markdown(
+        """
+        <style>
+        .chat-container {
+            height: 500px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: white;
+            margin-bottom: 10px;
+        }
+        .chat-input {
+            position: fixed;
+            bottom: 10px;
+            left: 20px;
+            right: 20px;
+            margin: 0 auto;
+            z-index: 1;
+            background-color: white;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+        </style>
+        """, 
+        unsafe_allow_html=True
+    )
+
     left_col, right_col = st.columns(2)
-    
+
     # 왼쪽 컬럼: 채팅 인터페이스
     with left_col:
         st.title("ABL AI ChatBot")
-        for message in st.session_state.messages:
-            with st.chat_message(message["role"]):
-                st.markdown(message["content"])
 
-        if message := st.chat_input("메시지를 입력하세요..."):
+        # st.markdown('<div class="left-col-container">', unsafe_allow_html=True)
+        # st.markdown('<div class="chat-container-wrapper">', unsafe_allow_html=True)
+        chat_container = st.empty()
+        with chat_container.container():
+            for message in st.session_state.messages:
+                with st.chat_message(message["role"]):
+                    st.markdown(message["content"])
+        # st.markdown('</div>', unsafe_allow_html=True)
+
+        #if message := st.chat_input("메시지를 입력하세요..."):
+        
+        # 메시지 입력창
+        #st.markdown('<div class="chat-input-wrapper">', unsafe_allow_html=True)
+        #user_input = st.chat_input("메시지를 입력하세요...", key="chat_input")#, placeholder="Type a message", label_visibility="collapsed")
+        #st.markdown('</div>', unsafe_allow_html=True)
+        
+        if message := st.chat_input(""): #user_input:
             st.session_state.messages.append({"role": "user", "content": message})
-            #st.session_state.messages.append({"role": "assistant", "content": init_message})
             
             with st.chat_message("user"):
                 st.markdown(message)
 
             #assistant_response, hlink = request_chat_api(message=message) #, terms=selected_contract)
-            assistant_response = request_chat_api(message=message) #, terms=selected_contract)
+            assistant_response = request_chat_api(message=message) 
+            #, terms=selected_contract)
             
-            print("******************\n\n")
-            print(assistant_response)
-            print("******************\n\n")
-
-            page_num = assistant_response['pages'][0]
+            page_num = assistant_response['pages']
             st.session_state.page_num = page_num  # 페이지 번호를 세션 상태에 저장
 
 
             with st.chat_message("assistant"):
                 message_placeholder = st.empty()
                 full_response = ""
-                for lines in assistant_response.split("\n"):
+                for lines in assistant_response['content'].split("\n"):
                     for chunk in lines.split():
                         full_response += chunk + " "
                         time.sleep(0.05)
@@ -151,7 +189,9 @@ def chat_main():
             st.session_state.messages.append(
                 {"role": "assistant", "content": full_response}
             )
-            print(st.session_state.messages)
+            # print(st.session_state.messages)
+        # st.markdown('</div>', unsafe_allow_html=True)  # close chat-input-wrapper
+        # st.markdown('</div>', unsafe_allow_html=True)  # close left-col-container
 
     # 오른쪽 컬럼: PDF 뷰어
     with right_col:

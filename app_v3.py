@@ -12,7 +12,7 @@ from googleapiclient.errors import HttpError
 import fitz
 
 #API_BASE_URL = "http://localhost:8002/chat"
-API_BASE_URL = 'https://22f6-34-136-50-177.ngrok-free.app/chat'
+API_BASE_URL = 'https://68a5-35-186-162-191.ngrok-free.app/chat'
 #st.title("ABL AI ChtBot")
     
 # selected_contract = st.sidebar.selectbox("약관 종류를 선택하세요", contracts)
@@ -26,21 +26,19 @@ def request_chat_api(
     # temperature: float = 0.9,
     #terms: str
 ) -> str:
+    
+    print("@@@@@@@@@@@@@@@@", message)
     param = {'content': message}
     resp = requests.post(
         API_BASE_URL,
         json=param
-        # {
-        #     #"message": message,
-        #     # "model": model,
-        #     # "max_tokens": max_tokens,
-        #     # "temperature": temperature,
-        #     #'terms': terms
-        # },
     )
     resp = resp.json()
-    #resp = json.loads(resp.content)
+    print("----------------------", resp)
+    #resp = json.loads(resp)
     #resp = resp['message']
+
+
     # print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@", resp['message']['content'])
     
     return resp #["message"]['content'] #, resp["hyperlink"]
@@ -95,9 +93,15 @@ def display_pdf(file_handle, page_num):
 
 
 
+# 대화 상태 초기화 함수
 def init_session_state():
-    
-# 레이아웃 분할
+
+    init_message = "안녕하세요. 무엇을 도와드릴까요?"
+    if "messages" not in st.session_state:
+        st.session_state.messages = [{"role": "assistant", "content": init_message}]
+    if "page_num" not in st.session_state:
+        st.session_state.page_num = 1
+
     st.set_page_config(layout="wide")
 
     left_col, right_col = st.columns(2)
@@ -124,49 +128,51 @@ def init_session_state():
         file_id = "1Gkd7NYYju-Mqy2wNbR1A5OaQAQHTSBsH"  # Google Drive 파일 ID
         if file_id:
             file_handle = download_pdf_from_gdrive(file_id)
-            display_pdf(file_handle, page_num)
+            display_pdf(file_handle, st.session_state.page_num)
         else:
             st.warning("No file ID provided")
 
 def chat_main():
+    
+    # 메인 레이아웃 설정
     init_session_state()
+
+    # 왼쪽 컬럼: 채팅 인터페이스
         
-    if message := st.chat_input(""):
+    if message := st.chat_input(""): #user_input:
         st.session_state.messages.append({"role": "user", "content": message})
-        #st.session_state.messages.append({"role": "assistant", "content": init_message})
         
         with st.chat_message("user"):
             st.markdown(message)
 
         #assistant_response, hlink = request_chat_api(message=message) #, terms=selected_contract)
-        assistant_response = request_chat_api(message=message) #, terms=selected_contract)
-        
-        print("******************\n\n")
-        print(assistant_response)
-        print("******************\n\n")
+        assistant_response = request_chat_api(message=message) 
+        #, terms=selected_contract)
         
         page_num = assistant_response['pages']
-        st.session_state.page_num = page_num 
+        st.session_state.page_num = page_num  # 페이지 번호를 세션 상태에 저장
+
 
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
             full_response = ""
-            for lines in assistant_response.split("\n"):
+            for lines in assistant_response['content'].split("\n"):
                 for chunk in lines.split():
                     full_response += chunk + " "
                     time.sleep(0.05)
                     # Add a blinking cursor to simulate typing
                     message_placeholder.markdown(full_response)
                 full_response += "\n"
-            full_response = full_response #+ "\n ----------------------참고 약관---------------------- \n\n" + hlink + "\n" #full_response.replace('  ', ' ')
+            #full_response = full_response #+ "\n ----------------------참고 약관---------------------- \n\n" + hlink + "\n" #full_response.replace('  ', ' ')
             message_placeholder.markdown(full_response)
 
         # Add assistant response to chat history
         st.session_state.messages.append(
             {"role": "assistant", "content": full_response}
         )
-        print(st.session_state.messages)
-        
+        # print(st.session_state.messages)
+    # st.markdown('</div>', unsafe_allow_html=True)  # close chat-input-wrapper
+    # st.markdown('</div>', unsafe_allow_html=True)  # close left-col-container
 
 
 if __name__ == "__main__":
