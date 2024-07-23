@@ -12,7 +12,7 @@ from googleapiclient.errors import HttpError
 import fitz
 
 #API_BASE_URL = "http://localhost:8002/chat"
-API_BASE_URL = 'https://2274-35-223-57-127.ngrok-free.app/chat'
+API_BASE_URL = 'https://bffc-34-127-76-175.ngrok-free.app/chat'
 #st.title("ABL AI ChtBot")
     
 # selected_contract = st.sidebar.selectbox("약관 종류를 선택하세요", contracts)
@@ -21,14 +21,14 @@ API_BASE_URL = 'https://2274-35-223-57-127.ngrok-free.app/chat'
 
 def request_chat_api(
     message: str,
-    # model: str = "gpt-3.5-turbo",
+    model: str,
     # max_tokens: int = 500,
     # temperature: float = 0.9,
     #terms: str
 ) -> str:
     
     print("@@@@@@@@@@@@@@@@", message)
-    param = {'content': message}
+    param = {'content': message, 'model': model}
     resp = requests.post(
         API_BASE_URL,
         json=param
@@ -72,29 +72,58 @@ def download_pdf_from_gdrive(file_id):
 
 
 # PDF를 페이지별로 이미지를 생성하여 보여주는 함수
-def display_pdf(file_handle, page_num):
+# def display_pdf(file_handle, page_num):
+#     try:
+#         print("========================\n\n")
+#         print(page_num)
+#         print("========================\n\n")
+#         page_num = int(page_num)-1
+#         pdf_document = fitz.open(stream=file_handle, filetype="pdf")
+#         if 0 <= page_num < len(pdf_document):
+#             page = pdf_document.load_page(page_num)
+#             pix = page.get_pixmap()
+#             img = pix.tobytes("png")
+#             st.image(img)
+#         else:
+#             st.warning(f"페이지 번호 {page_num}가 유효하지 않습니다.")
+#     except Exception as e:
+#         st.error(f"PDF를 표시할 수 없습니다: {e}")
+
+def display_pdf(file_handle, page_nums):
     try:
-        page_num = int(page_num)-1
+        print("==========", page_nums)
+        page_nums.sort()
         pdf_document = fitz.open(stream=file_handle, filetype="pdf")
-        if 0 <= page_num < len(pdf_document):
-            page = pdf_document.load_page(page_num)
-            pix = page.get_pixmap()
-            img = pix.tobytes("png")
-            st.image(img)
-        else:
-            st.warning(f"페이지 번호 {page_num}가 유효하지 않습니다.")
+        
+        # page_nums는 1 기반이므로 이를 0 기반으로 변경
+        page_nums = [int(pn) - 1 for pn in page_nums]
+
+        for page_num in page_nums:
+            print("========================\n\n")
+            print(page_num + 1)  # 1 기반으로 표시
+            print("========================\n\n")
+            
+            if 0 <= page_num < len(pdf_document):
+                page = pdf_document.load_page(page_num)
+                pix = page.get_pixmap()
+                img = pix.tobytes("png")
+                st.image(img)
+            else:
+                st.warning(f"페이지 번호 {page_num + 1}가 유효하지 않습니다.")
     except Exception as e:
         st.error(f"PDF를 표시할 수 없습니다: {e}")
 
-
-
 # 대화 상태 초기화 함수
 def init_session_state():
-    init_message = "안녕하세요. 무엇을 도와드릴까요?"
+    init_message = """안녕하세요. 저는 ABL 생명 인사팀에 근무하는 복리후생 챗봇입니다. 
+    현재 개발 중이라서 답변이 정확하지 않을 수도 있습니다. 아래 채팅창에 궁금한 내용을 입력해주세요. 
+    그리고 오른쪽에 있는 PDF 뷰어에서 참고 문서를 확인할 수 있습니다.
+    좀 더 정확한 답변을 드리기 위해 노력하겠습니다. 감사합니다. 
+    """
     if "messages" not in st.session_state:
         st.session_state.messages = [{"role": "assistant", "content": init_message}]
     if "page_num" not in st.session_state:
-        st.session_state.page_num = 1
+        st.session_state.page_num = [1]
 
 
 def chat_main():
@@ -131,11 +160,21 @@ def chat_main():
         unsafe_allow_html=True
     )
 
+    #select_col, 
     left_col, right_col = st.columns(2)
-
+    # with select_col:
+    #     option = st.selectbox(
+    #     "How would you like to be contacted?",
+    #     ("Email", "Home phone", "Mobile phone"),
+    #     label_visibility=st.session_state.visibility,
+    #     #disabled=st.session_state.disabled,
+    # )
     # 왼쪽 컬럼: 채팅 인터페이스
     with left_col:
         st.title("ABL AI ChatBot")
+        models = ["GPT-4", 'HCX-1']
+    
+        selected_model = st.sidebar.selectbox("모델을 선택하세요", models)
 
         # st.markdown('<div class="left-col-container">', unsafe_allow_html=True)
         # st.markdown('<div class="chat-container-wrapper">', unsafe_allow_html=True)
@@ -160,7 +199,7 @@ def chat_main():
                 st.markdown(message)
 
             #assistant_response, hlink = request_chat_api(message=message) #, terms=selected_contract)
-            assistant_response = request_chat_api(message=message) 
+            assistant_response = request_chat_api(message=message, model=selected_model) 
             #, terms=selected_contract)
             
             page_num = assistant_response['pages']
