@@ -119,6 +119,8 @@ def init_session_state():
     현재 개발 중이라서 답변이 정확하지 않을 수도 있습니다. 아래 채팅창에 궁금한 내용을 입력해주세요. 
     그리고 오른쪽에 있는 PDF 뷰어에서 참고 문서를 확인할 수 있습니다.
     좀 더 정확한 답변을 드리기 위해 노력하겠습니다. 감사합니다. 
+
+    가급적 자세히 질문해주시면 더 정확한 답변을 드릴 수 있습니다.
     """
     if "messages" not in st.session_state:
         st.session_state.messages = [{"role": "assistant", "content": init_message}]
