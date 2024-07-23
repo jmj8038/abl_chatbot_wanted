@@ -12,7 +12,7 @@ from googleapiclient.errors import HttpError
 import fitz
 
 #API_BASE_URL = "http://localhost:8002/chat"
-API_BASE_URL = 'https://bffc-34-127-76-175.ngrok-free.app/chat'
+API_BASE_URL = 'https://a009-34-86-125-225.ngrok-free.app/chat'
 #st.title("ABL AI ChtBot")
     
 # selected_contract = st.sidebar.selectbox("약관 종류를 선택하세요", contracts)
